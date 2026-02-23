@@ -16,31 +16,33 @@ searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   // Validasi menggunakan method trim(), trim() mengembalikan string tanpa spasi / tab / new line di depan atau belakang string
-  // Jika string kosong ("") akan dinaggap false oleh if() dan jika ada string ("string") akan dianggap true oleh if()
+  // Jika string kosong ("") akan dianggap false oleh if() dan jika ada string ("string") akan dianggap true oleh if()
   if (!inputCity.value.trim()) {
     alert("Input a City Name");
     return;
   }
 
-  currentCity = inputCity.value.trim().toLowerCase();
-  city.textContent = currentCity;
+  currentCity = inputCity.value.trim();
+  // city.textContent = currentCity;
   getWeather(currentCity);
   saveCity();
+  inputCity.value = "";
 });
 
 // Get weather information base on city name
 const getWeather = async (currentCity) => {
   try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=d554629ffc068aab32202414a57b6407`,
-    );
+    const response = await fetch(`/api/weather?city=${currentCity}`);
 
     if (!response.ok) {
       const error = new Error("HTTP Error");
       error.status = response.status;
       throw error;
     }
+
     const data = await response.json();
+
+    city.textContent = data.name;
     weather.textContent = data.weather[0].main;
     temperature.textContent = data.main.temp;
   } catch (error) {
