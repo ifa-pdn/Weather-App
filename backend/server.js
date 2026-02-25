@@ -20,19 +20,20 @@ app.get("/api/weather", async (req, res) => {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`,
     );
+
     const data = await response.json();
+    console.log(data);
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
 
     res.json(data);
-    console.log("data:", data);
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server is Running on http://localhost:${PORT}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("Server Running");
 });
