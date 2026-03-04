@@ -12,11 +12,24 @@
     </style>
   </head>
   <body>
-    <form id="search">
-      <input type="text" name="city" id="inputCity" />
-      <button type="submit">Search</button>
+    <label>
+      Country :<br />
+      <select name="country" id="inputCountry">
+        <option value="JP">Japan</option>
+        <option value="ID">Indonesia</option>
+        <option value="GB">England</option>
+      </select>
+    </label>
+    <form id="search" autocomplete="off">
+      <label>
+        City :<br />
+        <input type="text" name="city" id="inputCity" />
+      </label>
+      <ul class="suggestions"></ul>
+      <!-- <button type="submit">Search</button> -->
     </form>
     <p class="error-message"></p>
+    <!-- <p class="geocoding-error"></p> -->
     <p>City</p>
     <p class="city bold"></p>
     <p>Temperature</p>
@@ -34,6 +47,8 @@
     <p class="humidity bold"></p>
     <p>Wind speed</p>
     <p class="wind-speed bold"></p>
+    <p>Daily</p>
+    <ul class="daily bold"></ul>
     <script src="script.js"></script>
   </body>
 </html>

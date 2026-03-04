@@ -13,16 +13,39 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-app.get("/api/weather", async (req, res) => {
+// Get geo-coding
+app.get("/api/geocoding", async (req, res) => {
   const city = req.query.city;
+  const country = req.query.country;
 
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`,
+      `http://api.openweathermap.org/geo/1.0/direct?q=${city},${country}&limit=5&appid=${process.env.API_KEY}`,
     );
 
     const data = await response.json();
-    console.log(data);
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: "System Error" });
+  }
+});
+
+// Get weather by lat & lon
+app.get("/api/weather", async (req, res) => {
+  const lat = req.query.lat;
+  const lon = req.query.lon;
+
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.API_KEY}`,
+    );
+
+    const data = await response.json();
 
     if (!response.ok) {
       return res.status(response.status).json(data);
@@ -33,6 +56,50 @@ app.get("/api/weather", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+app.get("/api/forecast", async (req, res) => {
+  const lat = req.query.lat;
+  const lon = req.query.lon;
+
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.API_KEY}`,
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    res.json(data);
+    console.log(data);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get weather
+// app.get("/api/weather", async (req, res) => {
+//   const city = req.query.city;
+
+//   try {
+//     const response = await fetch(
+//       `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`,
+//     );
+
+//     const data = await response.json();
+//     console.log(data);
+
+//     if (!response.ok) {
+//       return res.status(response.status).json(data);
+//     }
+
+//     res.json(data);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is Running on http://localhost:${PORT}`);
