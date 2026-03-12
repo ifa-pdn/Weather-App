@@ -15,6 +15,7 @@ const errorMessageUI = document.querySelector(".error-message");
 const geocodingErrorUI = document.querySelector(".geocoding-error");
 const suggestions = document.querySelector(".suggestions");
 const daily = document.querySelector(".daily");
+const aDay = document.querySelector(".a-day");
 
 // State
 let currentCity = "Nara";
@@ -23,6 +24,10 @@ let currentLat = 33.2497182;
 let currentLon = 132.6571726;
 let currentDaily = "";
 let dailyData = "";
+let dateNow = document.querySelector(".date-now");
+
+// Show date now
+dateNow.innerText = new Date().toISOString().split("T")[0];
 
 // Save default country, city in local storage
 const saveCity = () => localStorage.setItem("currentCity", currentCity);
@@ -30,6 +35,11 @@ const saveCountry = () =>
   localStorage.setItem("currentCountry", currentCountry);
 const saveLat = () => localStorage.setItem("currentLat", currentLat);
 const saveLon = () => localStorage.setItem("currentLon", currentLon);
+
+// Helper
+const kelvinToCelcius = (kelvin) => {
+  return Math.round(kelvin - 273.15);
+};
 
 // Select and save Country
 inputCountry.addEventListener("change", () => {
@@ -141,15 +151,21 @@ const getWeatherByCoords = async (lat, lon, name) => {
       throw new Error(data.error || data.message || "Unknown error");
     }
 
+    console.log("data:", data);
+
     let iconImage = `https://openweathermap.org/payload/api/media/file/${data.weather[0].icon}.png`;
 
+    // const kelvinToCelcius = (kelvin) => {
+    //   return Math.round(kelvin - 273.15);
+    // };
+
     city.textContent = name;
-    temperature.textContent = `${Math.round(data.main.temp - 273.15)}°C`; // Kelvin to Celcius
-    maxTemp.textContent = `${Math.round(data.main.temp_max - 273.15)}°C`; // Kelvin to Celcius
-    minTemp.textContent = `${Math.round(data.main.temp_min - 273.15)}°C`; // Kelvin to Celcius
+    temperature.textContent = `${kelvinToCelcius(data.main.temp)}°C`; // Kelvin to Celcius
+    maxTemp.textContent = `${kelvinToCelcius(data.main.temp_max)}°C`; // Kelvin to Celcius
+    minTemp.textContent = `${kelvinToCelcius(data.main.temp_min)}°C`; // Kelvin to Celcius
     weather.textContent = data.weather[0].main;
     icon.setAttribute("src", iconImage);
-    feelsLike.textContent = `${Math.round(data.main.feels_like - 273.15)}°C`; // Kelvin to Celcius
+    feelsLike.textContent = `${kelvinToCelcius(data.main.feels_like)}°C`; // Kelvin to Celcius
     humidity.textContent = data.main.humidity;
     windSpeed.textContent = data.wind.speed;
   } catch (error) {
@@ -168,11 +184,19 @@ const getForecast = async (lat, lon) => {
       throw new Error(data.error || data.message || "Unknown error");
     }
 
+    // Get 24 Hour Forecast
+    const now = new Date();
+    const aDaysForecast = data.list
+      .filter((item) => new Date(item.dt_txt) > now)
+      .slice(0, 8);
+
+    renderADay(aDaysForecast);
+
+    // Grouping data by Day
     const grouped = {};
 
     data.list.forEach((item) => {
       const date = item.dt_txt.split(" ")[0];
-
       if (!grouped[date]) {
         grouped[date] = [];
       }
@@ -180,18 +204,31 @@ const getForecast = async (lat, lon) => {
       grouped[date].push(item);
     });
 
-    const dailyMinMax = Object.keys(grouped).map((date) => {
-      const temps = grouped[date].map((item) =>
-        Math.round(item.main.temp - 273.15),
+    // Get 5 (4?) days Min/Max Forecast, Average POP (Possible rain), Average Weather
+    const dailyData = Object.keys(grouped).map((date) => {
+      const items = grouped[date]; // Mengambil value dari object (dua cara mengambil value dari object: namaObject.key atau namaObject["key"])
+      const temps = items.map((item) => kelvinToCelcius(item.main.temp));
+      const avgPop =
+        items.reduce((sum, item) => sum + item.pop, 0) / items.length;
+      const weatherIcon = items.map((item) => item.weather[0].icon);
+      const weatherCount = {};
+      weatherIcon.forEach((weather) => {
+        weatherCount[weather] = (weatherCount[weather] || 0) + 1;
+      });
+      const avgWeather = Object.keys(weatherCount).reduce((acc, curr) =>
+        weatherCount[acc] >= weatherCount[curr] ? acc : curr,
       );
 
       return {
         date,
+        avgWeather,
+        avgPop: Math.round(avgPop * 100),
         max: Math.max(...temps),
         min: Math.min(...temps),
       };
     });
-    renderDaily(dailyMinMax.slice(1));
+
+    renderDaily(dailyData.slice(1));
   } catch (error) {
     errorMessageUI.textContent = "";
     errorMessageUI.textContent = error.message;
@@ -208,9 +245,25 @@ const renderDaily = (data) => {
 
     const card = document.createElement("div");
 
-    card.innerHTML = `<p>${formatedDate}</p><p>${day.min}°C / ${day.max}°C</p>`;
+    card.innerHTML = `<p>${formatedDate}</p><div><p><img src='${"https://openweathermap.org/payload/api/media/file/" + day.avgWeather + ".png"}'></p><p>${day.avgWeather === "10n" ? day.avgPop + "%" : ""}</p></div><p>${day.min}°C / ${day.max}°C</p>`;
 
     daily.appendChild(card);
+  });
+};
+
+// Render a day forecast
+const renderADay = (data) => {
+  aDay.innerHTML = "";
+
+  data.forEach((item) => {
+    const temp = kelvinToCelcius(item.main.temp);
+    const time = item.dt_txt.split(" ")[1].substring(0, 5);
+
+    const box = document.createElement("div");
+
+    box.innerHTML = `<p>${time}</p><p>${temp}°C</p>`;
+
+    aDay.appendChild(box);
   });
 };
 
