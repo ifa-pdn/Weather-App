@@ -4,51 +4,89 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
-    <style>
-      .bold {
-        font-weight: bold;
-        font-size: 1.5rem;
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
-    <label>
-      Country :<br />
-      <select name="country" id="inputCountry">
-        <option value="JP">Japan</option>
-        <option value="ID">Indonesia</option>
-        <option value="GB">England</option>
-      </select>
-    </label>
-    <form id="search" autocomplete="off">
-      <label>
-        City :<br />
-        <input type="text" name="city" id="inputCity" />
-      </label>
-      <ul class="suggestions"></ul>
-      <!-- <button type="submit">Search</button> -->
-    </form>
-    <p class="error-message"></p>
-    <!-- <p class="geocoding-error"></p> -->
-    <p>City</p>
-    <p class="city bold"></p>
-    <p>Temperature</p>
-    <p class="temperature bold"></p>
-    <p>Feels like</p>
-    <p class="feels-like bold"></p>
-    <p>Max</p>
-    <p class="max-temp bold"></p>
-    <p>Min</p>
-    <p class="min-temp bold"></p>
-    <p>Weather</p>
-    <p class="weather bold"></p>
-    <p><img src="" alt="#" class="weather-icon" /></p>
-    <p>Humidity</p>
-    <p class="humidity bold"></p>
-    <p>Wind speed</p>
-    <p class="wind-speed bold"></p>
-    <p>Daily</p>
-    <ul class="daily bold"></ul>
+    <div class="outliner">
+      <div class="container">
+        <div class="search">
+          <div class="country">
+            <label class="country-label">
+              <i class="fa-solid fa-earth-asia earth"></i>
+              <select name="country" id="inputCountry" class="input-country">
+                <option value="JP">Japan</option>
+                <option value="ID">Indonesia</option>
+                <option value="GB">England</option>
+              </select>
+            </label>
+          </div>
+          <form id="search" class="search-city" autocomplete="off">
+            <label class="city-label" for="inputCity">
+              <input
+                type="text"
+                name="city"
+                id="inputCity"
+                class="city-input"
+                placeholder="Search City"
+              />
+              <i class="fa-solid fa-magnifying-glass search-glass"></i>
+            </label>
+            <div class="suggestions"></div>
+          </form>
+        </div>
+        <p class="error-message"></p>
+        <!-- Current Weather -->
+        <div class="current-weather">
+          <p class="city">Osaka</p>
+          <p class="date-now"></p>
+          <div class="weather-icon"></div>
+          <p class="temperature">10°C</p>
+          <p class="feels">Feels like <span class="feels-like">9°C</span></p>
+          <p class="weather">Clouds</p>
+        </div>
+        <!-- Details -->
+        <div class="details">
+          <div class="item min">
+            <i class="fa-solid fa-caret-down"></i>
+            <span class="min-temp number">10°C</span>
+          </div>
+          <div class="item max">
+            <i class="fa-solid fa-caret-up"></i>
+            <span class="max-temp number">11°C</span>
+          </div>
+          <div class="item humi">
+            <i class="fa-solid fa-droplet"></i>
+            <span class="humidity number">52%</span>
+          </div>
+          <div class="item wind">
+            <i class="fa-solid fa-wind"></i>
+            <span class="wind-speed number">5.14</span>
+          </div>
+        </div>
+        <!-- Hourly -->
+        <div class="hourly">
+          <div class="hourly-list a-day">
+            <!-- JS akan render disini -->
+          </div>
+        </div>
+        <!-- Daily -->
+        <ul class="daily">
+          <!-- JS render disini -->
+        </ul>
+      </div>
+    </div>
+
+    <script
+      src="https://kit.fontawesome.com/472ab9d74f.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="script.js"></script>
   </body>
 </html>

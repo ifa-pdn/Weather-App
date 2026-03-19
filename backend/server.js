@@ -31,7 +31,7 @@ app.get("/api/geocoding", async (req, res) => {
 
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "System Error" });
+    res.status(500).json({ error: "Failed to get weather data" });
   }
 });
 
@@ -78,28 +78,6 @@ app.get("/api/forecast", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Get weather
-// app.get("/api/weather", async (req, res) => {
-//   const city = req.query.city;
-
-//   try {
-//     const response = await fetch(
-//       `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.API_KEY}`,
-//     );
-
-//     const data = await response.json();
-//     console.log(data);
-
-//     if (!response.ok) {
-//       return res.status(response.status).json(data);
-//     }
-
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
 
 app.listen(PORT, () => {
   console.log(`Server is Running on http://localhost:${PORT}`);
