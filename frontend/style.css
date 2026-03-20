@@ -30,7 +30,7 @@ ol {
 }
 
 .outliner {
-  max-width: 420px;
+  max-width: 480px;
   height: calc(100svh - 2rem);
   max-height: 844px;
   overflow: auto;
