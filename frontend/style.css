@@ -333,7 +333,7 @@ ol {
   transform: translateX(1px);
 }
 
-@media (max-width: 469px) {
+@media (max-width: 480px) {
   .outliner {
     height: 100svh;
     margin-top: 0;
