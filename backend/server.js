@@ -57,6 +57,8 @@ app.get("/api/weather", async (req, res) => {
   }
 });
 
+// Get forecast
+
 app.get("/api/forecast", async (req, res) => {
   const lat = req.query.lat;
   const lon = req.query.lon;

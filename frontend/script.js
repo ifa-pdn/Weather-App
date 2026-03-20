@@ -86,7 +86,6 @@ const setBackground = (weather) => {
     bg = mainBg.Snow;
   }
 
-  // return `linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 50%)), url(images/${bg})`;
   return `url(images/${bg})`;
 };
 
@@ -222,16 +221,10 @@ const getWeatherByCoords = async (lat, lon, name) => {
     const data = await response.json();
 
     if (!response.ok) {
-      // data.error is the response from the catch backend
-      // data.message is the response from the backend if(!response.ok)
       throw new Error(data.error || data.message || "Unknown error");
     }
 
     let iconImage = `https://openweathermap.org/payload/api/media/file/${data.weather[0].icon}.png`;
-
-    // const kelvinToCelcius = (kelvin) => {
-    //   return Math.round(kelvin - 273.15);
-    // };
 
     city.textContent = name;
     temperature.textContent = `${kelvinToCelcius(data.main.temp)}°C`;
@@ -280,9 +273,9 @@ const getForecast = async (lat, lon) => {
       grouped[date].push(item);
     });
 
-    // Get 5 (4?) days Min/Max Forecast, Average POP (Possible rain), Average Weather
+    // Get 5 days Min/Max Forecast, Average POP (Possible rain), Average Weather
     const dailyData = Object.keys(grouped).map((date) => {
-      const items = grouped[date]; // Mengambil value dari object (dua cara mengambil value dari object: namaObject.key atau namaObject["key"])
+      const items = grouped[date];
       const temps = items.map((item) => kelvinToCelcius(item.main.temp));
       const avgPop =
         items.reduce((sum, item) => sum + item.pop, 0) / items.length;
