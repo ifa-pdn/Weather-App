@@ -1,5 +1,7 @@
 # Weather App
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-4a92ff?style=for-the-badge&logo=openai&logoColor=white)](https://weather-app-wlrf.onrender.com/)
+
 [日本語](#デスクリプション) / [Bahasa-Indonesia](#deskripsi) / [English](#description)
 
 <p align="left">
