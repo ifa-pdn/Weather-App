@@ -11,7 +11,6 @@ const maxTemp = document.querySelector(".max-temp");
 const minTemp = document.querySelector(".min-temp");
 const humidity = document.querySelector(".humidity");
 const windSpeed = document.querySelector(".wind-speed");
-const errorMessageUI = document.querySelector(".error-message");
 const geocodingErrorUI = document.querySelector(".geocoding-error");
 const suggestions = document.querySelector(".suggestions");
 const daily = document.querySelector(".daily");
@@ -126,7 +125,7 @@ inputCity.addEventListener("input", (e) => {
 const getBounceGeocoding = async (city, country) => {
   if (!city.trim()) {
     suggestions.innerHTML = "";
-    const ul = document.createElement("ul");
+    const ul = reateElemdocument.cent("ul");
     ul.classList.add("sugges-inner");
     const li = document.createElement("li");
     li.innerText = "Input a City name";
@@ -135,11 +134,9 @@ const getBounceGeocoding = async (city, country) => {
     return;
   }
 
-  errorMessageUI.innerText = "";
-
   try {
     const response = await fetch(
-      // Mengguakan encodeURI untuk mencegah error jika user meneginput nama kota dengan spasi atau simbol
+      // Mengguakan encodeURI untuk mencegah error jika user menginput nama kota dengan spasi atau simbol
       `/api/geocoding?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`,
     );
     const data = await response.json();
@@ -150,12 +147,9 @@ const getBounceGeocoding = async (city, country) => {
 
     renderSuggestions(data);
   } catch (error) {
-    errorMessageUI.textContent = "";
-
     const ul = document.createElement("ul");
     ul.classList.add("sugges-inner");
     const li = document.createElement("li");
-    li.innerText = "Input a City name";
 
     if (error.message === "Failed to fetch") {
       li.textContent = "Can't access internal server";
@@ -238,8 +232,17 @@ const getWeatherByCoords = async (lat, lon, name) => {
 
     outliner.style.backgroundImage = setBackground(data.weather[0].main);
   } catch (error) {
-    errorMessageUI.textContent = "";
-    errorMessageUI.textContent = error.message;
+    const ul = document.createElement("ul");
+    ul.classList.add("sugges-inner");
+    const li = document.createElement("li");
+
+    if (error.message === "Failed to fetch") {
+      li.textContent = "Can't access internal server";
+    } else {
+      li.textContent = error.message;
+    }
+    ul.appendChild(li);
+    suggestions.appendChild(ul);
   }
 };
 
@@ -299,8 +302,17 @@ const getForecast = async (lat, lon) => {
 
     renderDaily(dailyData.slice(1));
   } catch (error) {
-    errorMessageUI.textContent = "";
-    errorMessageUI.textContent = error.message;
+    const ul = document.createElement("ul");
+    ul.classList.add("sugges-inner");
+    const li = document.createElement("li");
+
+    if (error.message === "Failed to fetch") {
+      li.textContent = "Can't access internal server";
+    } else {
+      li.textContent = error.message;
+    }
+    ul.appendChild(li);
+    suggestions.appendChild(ul);
   }
 };
 

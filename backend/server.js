@@ -31,7 +31,7 @@ app.get("/api/geocoding", async (req, res) => {
 
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "Failed to get weather data" });
+    res.status(500).json({ error: "Cant't connect to server" });
   }
 });
 
@@ -53,7 +53,7 @@ app.get("/api/weather", async (req, res) => {
 
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Cant't connect to server" });
   }
 });
 
@@ -77,7 +77,7 @@ app.get("/api/forecast", async (req, res) => {
     res.json(data);
     console.log(data);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Cant't connect to server" });
   }
 });
 
