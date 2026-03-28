@@ -18,6 +18,8 @@ const aDay = document.querySelector(".a-day");
 const searchCityLabel = document.querySelector(".city-label");
 const mainContainer = document.querySelector(".container");
 const outliner = document.querySelector(".outliner");
+const mainContent = document.querySelector(".main-content");
+const contentsLoader = document.querySelector(".contents-loader");
 
 // State
 let currentCity = "Nara";
@@ -85,7 +87,7 @@ const setBackground = (weather) => {
     bg = mainBg.Snow;
   }
 
-  return `url(images/${bg})`;
+  return `url(./images/${bg})`;
 };
 
 // Show date now
@@ -123,9 +125,10 @@ inputCity.addEventListener("input", (e) => {
 
 // Get bounceGeocoding
 const getBounceGeocoding = async (city, country) => {
+  suggestions.innerHTML = "";
+
   if (!city.trim()) {
-    suggestions.innerHTML = "";
-    const ul = reateElemdocument.cent("ul");
+    const ul = document.createElement("ul");
     ul.classList.add("sugges-inner");
     const li = document.createElement("li");
     li.innerText = "Input a City name";
@@ -133,6 +136,13 @@ const getBounceGeocoding = async (city, country) => {
     suggestions.appendChild(ul);
     return;
   }
+
+  const ul = document.createElement("ul");
+  const li = document.createElement("li");
+  ul.classList.add("sugges-inner");
+  li.innerHTML = `<div class="search-loader"></div>`;
+  ul.appendChild(li);
+  suggestions.appendChild(ul);
 
   try {
     const response = await fetch(
@@ -210,6 +220,9 @@ const renderSuggestions = (places) => {
 
 // Get weather by coordinats
 const getWeatherByCoords = async (lat, lon, name) => {
+  mainContent.classList.add("hide");
+  contentsLoader.classList.remove("hide");
+
   try {
     const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
     const data = await response.json();
@@ -218,19 +231,43 @@ const getWeatherByCoords = async (lat, lon, name) => {
       throw new Error(data.error || data.message || "Unknown error");
     }
 
-    let iconImage = `https://openweathermap.org/payload/api/media/file/${data.weather[0].icon}.png`;
+    // let iconImage = `https://openweathermap.org/payload/api/media/file/${data.weather[0].icon}.png`;
 
-    city.textContent = name;
-    temperature.textContent = `${kelvinToCelcius(data.main.temp)}°C`;
-    maxTemp.textContent = `${kelvinToCelcius(data.main.temp_max)}°C`;
-    minTemp.textContent = `${kelvinToCelcius(data.main.temp_min)}°C`;
-    weather.textContent = data.weather[0].main;
-    icon.innerHTML = getWeatherIcon(data.weather[0].icon);
-    feelsLike.textContent = `${kelvinToCelcius(data.main.feels_like)}°C`;
-    humidity.textContent = data.main.humidity;
-    windSpeed.textContent = data.wind.speed;
+    // ambil url background
+    const bgUrl = setBackground(data.weather[0].main);
 
-    outliner.style.backgroundImage = setBackground(data.weather[0].main);
+    // buat image loader
+    const img = new Image();
+
+    // ambil url asli tanpa "url(...)"
+    const cleanUrl = bgUrl
+      .replace('url("', "")
+      .replace('")', "")
+      .replace("url(", "")
+      .replace(")", "");
+
+    // set src
+    img.src = cleanUrl;
+
+    // tunggu sampai image selesai load
+    img.onload = () => {
+      // set background setelah siap
+      outliner.style.backgroundImage = bgUrl;
+
+      // baru tampilkan semua data
+      city.textContent = name;
+      temperature.textContent = `${kelvinToCelcius(data.main.temp)}°C`;
+      maxTemp.textContent = `${kelvinToCelcius(data.main.temp_max)}°C`;
+      minTemp.textContent = `${kelvinToCelcius(data.main.temp_min)}°C`;
+      weather.textContent = data.weather[0].main;
+      icon.innerHTML = getWeatherIcon(data.weather[0].icon);
+      feelsLike.textContent = `${kelvinToCelcius(data.main.feels_like)}°C`;
+      humidity.textContent = data.main.humidity;
+      windSpeed.textContent = data.wind.speed;
+
+      mainContent.classList.remove("hide");
+      contentsLoader.classList.add("hide");
+    };
   } catch (error) {
     const ul = document.createElement("ul");
     ul.classList.add("sugges-inner");

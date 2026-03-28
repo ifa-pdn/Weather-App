@@ -30,6 +30,7 @@ ol {
 }
 
 .outliner {
+  position: relative;
   max-width: 480px;
   height: calc(100svh - 2rem);
   max-height: 844px;
@@ -60,6 +61,100 @@ ol {
 .outliner {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.search-loader {
+  width: 4px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin-left: 1.5rem;
+  animation: l5 1s infinite linear alternate;
+}
+@keyframes l5 {
+  0% {
+    box-shadow:
+      20px 0 #212121,
+      -20px 0 #0002;
+    background: #212121;
+  }
+  33% {
+    box-shadow:
+      20px 0 #212121,
+      -20px 0 #0002;
+    background: #0002;
+  }
+  66% {
+    box-shadow:
+      20px 0 #0002,
+      -20px 0 #212121;
+    background: #0002;
+  }
+  100% {
+    box-shadow:
+      20px 0 #0002,
+      -20px 0 #212121;
+    background: #212121;
+  }
+}
+
+.contents-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  visibility: visible;
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.main-loader {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+.main-loader::after,
+.main-loader::before {
+  content: "";
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: animloader 2s linear infinite;
+}
+.main-loader::after {
+  animation-delay: 1s;
+}
+
+@keyframes animloader {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.contents-loader.hide {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.main-content {
+  transition: 0.3s;
+  opacity: 1;
+  visibility: visible;
+}
+
+.main-content.hide {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .search {
@@ -135,7 +230,7 @@ ol {
   top: calc(100% + 4px);
   background-color: #ffffff;
   color: #262626;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .sugges-inner {

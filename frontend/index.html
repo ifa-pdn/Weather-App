@@ -66,44 +66,49 @@
             <div class="suggestions"></div>
           </form>
         </div>
-        <!-- Current Weather -->
-        <div class="current-weather">
-          <p class="city">Osaka</p>
-          <p class="date-now"></p>
-          <div class="weather-icon"></div>
-          <p class="temperature">10°C</p>
-          <p class="feels">Feels like <span class="feels-like">9°C</span></p>
-          <p class="weather">Clouds</p>
+        <div class="contents-loader">
+          <span class="main-loader"></span>
         </div>
-        <!-- Details -->
-        <div class="details">
-          <div class="item min">
-            <i class="fa-solid fa-caret-down"></i>
-            <span class="min-temp number">10°C</span>
+        <div class="main-content">
+          <!-- Current Weather -->
+          <div class="current-weather">
+            <p class="city">Osaka</p>
+            <p class="date-now"></p>
+            <div class="weather-icon"></div>
+            <p class="temperature">10°C</p>
+            <p class="feels">Feels like <span class="feels-like">9°C</span></p>
+            <p class="weather">Clouds</p>
           </div>
-          <div class="item max">
-            <i class="fa-solid fa-caret-up"></i>
-            <span class="max-temp number">11°C</span>
+          <!-- Details -->
+          <div class="details">
+            <div class="item min">
+              <i class="fa-solid fa-caret-down"></i>
+              <span class="min-temp number">10°C</span>
+            </div>
+            <div class="item max">
+              <i class="fa-solid fa-caret-up"></i>
+              <span class="max-temp number">11°C</span>
+            </div>
+            <div class="item humi">
+              <i class="fa-solid fa-droplet"></i>
+              <span class="humidity number">52%</span>
+            </div>
+            <div class="item wind">
+              <i class="fa-solid fa-wind"></i>
+              <span class="wind-speed number">5.14</span>
+            </div>
           </div>
-          <div class="item humi">
-            <i class="fa-solid fa-droplet"></i>
-            <span class="humidity number">52%</span>
+          <!-- Hourly -->
+          <div class="hourly">
+            <div class="hourly-list a-day">
+              <!-- JS akan render disini -->
+            </div>
           </div>
-          <div class="item wind">
-            <i class="fa-solid fa-wind"></i>
-            <span class="wind-speed number">5.14</span>
-          </div>
+          <!-- Daily -->
+          <ul class="daily">
+            <!-- JS render disini -->
+          </ul>
         </div>
-        <!-- Hourly -->
-        <div class="hourly">
-          <div class="hourly-list a-day">
-            <!-- JS akan render disini -->
-          </div>
-        </div>
-        <!-- Daily -->
-        <ul class="daily">
-          <!-- JS render disini -->
-        </ul>
       </div>
     </div>
 
