@@ -489,6 +489,7 @@ const getWeatherByCoords = async (lat, lon, name, direction = null) => {
 
       // Show all data
       city.textContent = name;
+      inputCountry.value = data.sys.country;
       temperature.textContent = `${kelvinToCelsius(data.main.temp)}°C`;
       maxTemp.textContent = `${kelvinToCelsius(data.main.temp_max)}°C`;
       minTemp.textContent = `${kelvinToCelsius(data.main.temp_min)}°C`;
@@ -500,7 +501,6 @@ const getWeatherByCoords = async (lat, lon, name, direction = null) => {
 
       slideDirection(direction);
       contentsLoader.classList.add("hide");
-      console.log("direction", direction);
     };
   } catch (error) {
     const ul = document.createElement("ul");
