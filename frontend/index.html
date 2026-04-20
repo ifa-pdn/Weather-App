@@ -15,101 +15,115 @@
 
   <body>
     <div class="outliner">
+      <div class="search">
+        <div class="country">
+          <i class="fa-solid fa-earth-asia earth"></i>
+          <select name="country" id="inputCountry" class="input-country">
+            <option value="JP">Japan</option>
+            <option value="ID">Indonesia</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="KR">South Korea</option>
+            <option value="CN">China</option>
+            <option value="IN">India</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="BR">Brazil</option>
+            <option value="MX">Mexico</option>
+            <option value="NL">Netherlands</option>
+            <option value="CH">Switzerland</option>
+            <option value="SG">Singapore</option>
+            <option value="TH">Thailand</option>
+            <option value="MY">Malaysia</option>
+            <option value="PH">Philippines</option>
+            <option value="VN">Vietnam</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="TR">Turkey</option>
+            <option value="RU">Russia</option>
+            <option value="ZA">South Africa</option>
+            <option value="SE">Sweden</option>
+            <option value="NO">Norway</option>
+            <option value="DK">Denmark</option>
+          </select>
+        </div>
+        <form id="search" class="search-city" autocomplete="off">
+          <label class="city-label" for="inputCity">
+            <input
+              type="text"
+              name="city"
+              id="inputCity"
+              class="city-input"
+              placeholder="Search City"
+            />
+            <i class="fa-solid fa-magnifying-glass search-glass"></i>
+          </label>
+          <div class="suggestions"></div>
+        </form>
+      </div>
       <div class="container">
-        <div class="search">
-          <div class="country">
-            <i class="fa-solid fa-earth-asia earth"></i>
-            <select name="country" id="inputCountry" class="input-country">
-              <option value="JP">Japan</option>
-              <option value="ID">Indonesia</option>
-              <option value="US">United States</option>
-              <option value="GB">United Kingdom</option>
-              <option value="KR">South Korea</option>
-              <option value="CN">China</option>
-              <option value="IN">India</option>
-              <option value="DE">Germany</option>
-              <option value="FR">France</option>
-              <option value="IT">Italy</option>
-              <option value="ES">Spain</option>
-              <option value="CA">Canada</option>
-              <option value="AU">Australia</option>
-              <option value="BR">Brazil</option>
-              <option value="MX">Mexico</option>
-              <option value="NL">Netherlands</option>
-              <option value="CH">Switzerland</option>
-              <option value="SG">Singapore</option>
-              <option value="TH">Thailand</option>
-              <option value="MY">Malaysia</option>
-              <option value="PH">Philippines</option>
-              <option value="VN">Vietnam</option>
-              <option value="AE">United Arab Emirates</option>
-              <option value="SA">Saudi Arabia</option>
-              <option value="TR">Turkey</option>
-              <option value="RU">Russia</option>
-              <option value="ZA">South Africa</option>
-              <option value="SE">Sweden</option>
-              <option value="NO">Norway</option>
-              <option value="DK">Denmark</option>
-            </select>
+        <div class="wrapper">
+          <div class="contents-loader">
+            <span class="main-loader"></span>
           </div>
-          <form id="search" class="search-city" autocomplete="off">
-            <label class="city-label" for="inputCity">
-              <input
-                type="text"
-                name="city"
-                id="inputCity"
-                class="city-input"
-                placeholder="Search City"
-              />
-              <i class="fa-solid fa-magnifying-glass search-glass"></i>
-            </label>
-            <div class="suggestions"></div>
-          </form>
-        </div>
-        <div class="contents-loader">
-          <span class="main-loader"></span>
-        </div>
-        <div class="main-content">
-          <!-- Current Weather -->
-          <div class="current-weather">
-            <p class="city">Osaka</p>
-            <p class="date-now"></p>
-            <div class="weather-icon"></div>
-            <p class="temperature">10°C</p>
-            <p class="feels">Feels like <span class="feels-like">9°C</span></p>
-            <p class="weather">Clouds</p>
+          <div class="main-content">
+            <!-- Current Weather -->
+            <div class="current-weather">
+              <p class="city">Osaka</p>
+              <p class="date-now"></p>
+              <div class="weather-icon"></div>
+              <p class="temperature">10°C</p>
+              <p class="feels">
+                Feels like <span class="feels-like">9°C</span>
+              </p>
+              <p class="weather">Clouds</p>
+            </div>
+            <!-- Details -->
+            <div class="details">
+              <div class="item min">
+                <i class="fa-solid fa-caret-down"></i>
+                <span class="min-temp number">10°C</span>
+              </div>
+              <div class="item max">
+                <i class="fa-solid fa-caret-up"></i>
+                <span class="max-temp number">11°C</span>
+              </div>
+              <div class="item humi">
+                <i class="fa-solid fa-droplet"></i>
+                <span class="humidity number">52%</span>
+              </div>
+              <div class="item wind">
+                <i class="fa-solid fa-wind"></i>
+                <span class="wind-speed number">5.14</span>
+              </div>
+            </div>
+            <!-- Hourly -->
+            <div class="hourly">
+              <div class="hourly-list a-day">
+                <!-- JS akan render disini -->
+              </div>
+            </div>
+            <!-- Daily -->
+            <ul class="daily">
+              <!-- JS render disini -->
+            </ul>
           </div>
-          <!-- Details -->
-          <div class="details">
-            <div class="item min">
-              <i class="fa-solid fa-caret-down"></i>
-              <span class="min-temp number">10°C</span>
-            </div>
-            <div class="item max">
-              <i class="fa-solid fa-caret-up"></i>
-              <span class="max-temp number">11°C</span>
-            </div>
-            <div class="item humi">
-              <i class="fa-solid fa-droplet"></i>
-              <span class="humidity number">52%</span>
-            </div>
-            <div class="item wind">
-              <i class="fa-solid fa-wind"></i>
-              <span class="wind-speed number">5.14</span>
-            </div>
-          </div>
-          <!-- Hourly -->
-          <div class="hourly">
-            <div class="hourly-list a-day">
-              <!-- JS akan render disini -->
-            </div>
-          </div>
-          <!-- Daily -->
-          <ul class="daily">
-            <!-- JS render disini -->
-          </ul>
         </div>
       </div>
+
+      <div class="message">
+        <p class="message-main"></p>
+        <p class="message-sub"></p>
+        <div class="confbtn-wrap"><button class="confirm-btn">OK</button></div>
+      </div>
+
+      <button class="next-btn nav disable">→</button>
+      <button class="prev-btn nav disable">←</button>
+      <button class="save-remove-btn">Save City</button>
     </div>
 
     <script

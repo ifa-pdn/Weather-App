@@ -1,4 +1,5 @@
 // DOM
+
 const searchForm = document.querySelector("#search");
 const inputCountry = document.querySelector("#inputCountry");
 const inputCity = document.querySelector("#inputCity");
@@ -20,15 +21,204 @@ const mainContainer = document.querySelector(".container");
 const outliner = document.querySelector(".outliner");
 const mainContent = document.querySelector(".main-content");
 const contentsLoader = document.querySelector(".contents-loader");
+const SRButton = document.querySelector(".save-remove-btn");
+const nextBtn = document.querySelector(".next-btn");
+const prevBtn = document.querySelector(".prev-btn");
+const navBtn = document.querySelectorAll(".nav");
+const mainMessages = document.querySelector(".message");
+const mainMessage = document.querySelector(".message-main");
+const subMessage = document.querySelector(".message-sub");
+const confirmBtn = document.querySelector(".confirm-btn");
 
-// State
-let currentCity = "Nara";
+// STATES
+
 let currentCountry = "JP";
-let currentLat = 33.2497182;
-let currentLon = 132.6571726;
+let activeCity = { name: "Nara", lat: 33.2497182, lon: 132.6571726 };
 let currentDaily = "";
 let dailyData = "";
 let dateNow = document.querySelector(".date-now");
+let cities = [];
+let currentIndex = 0;
+let debounceTimer;
+
+// FUNCTION EXPRESSIONS
+
+// Save current Index
+const saveCurrentIndex = () => {
+  localStorage.setItem("currentIndex", currentIndex);
+};
+
+// Get currnet Index
+const getCurrentIndex = () => {
+  currentIndex = cities.findIndex((item) => item.name === activeCity.name);
+  saveCurrentIndex();
+};
+
+// Save Cities
+const saveCities = () => {
+  localStorage.setItem("cities", JSON.stringify(cities));
+};
+
+// Save active City
+const saveActiveCity = () => {
+  localStorage.setItem("activeCity", JSON.stringify(activeCity));
+};
+
+// Get current cities from local storage
+const loadCities = () => {
+  cities = JSON.parse(localStorage.getItem("cities")) || [];
+};
+
+// Checking city existence
+const checkExistence = () =>
+  cities.some(
+    (item) => item.name.toLowerCase() === activeCity.name.toLowerCase(),
+  );
+
+// Save/Remove City function
+const saveRemoveCity = () => {
+  const existence = checkExistence();
+
+  if (!existence) {
+    addCity(activeCity);
+  } else {
+    removeCity();
+  }
+};
+
+// Add City
+const addCity = (newCity) => {
+  if (cities.length < 5) {
+    cities.push(newCity);
+    saveCities();
+    getCurrentIndex();
+    navBtnToggle();
+  } else {
+    mainMessages.classList.add("active");
+    mainMessage.textContent = "You already have 5 saved cities";
+    subMessage.textContent = "Remove one to add a new City.";
+
+    return;
+  }
+};
+
+confirmBtn.addEventListener("click", () =>
+  mainMessages.classList.remove("active"),
+);
+
+// Remove City
+const removeCity = () => {
+  cities.splice(currentIndex, 1);
+  currentIndex--;
+
+  if (cities.length === 0) {
+    mainMessages.classList.add("active");
+    mainMessage.textContent = "No saved cities";
+    subMessage.textContent = "Find a city and tap save to add it here.";
+    saveCities();
+    saveActiveCity();
+    getCurrentIndex();
+    navBtnToggle();
+    return;
+  }
+
+  if (currentIndex < 0) {
+    currentIndex = cities.length - 1;
+  }
+
+  const city = cities[currentIndex];
+
+  activeCity = {
+    name: city.name,
+    lat: city.lat,
+    lon: city.lon,
+  };
+
+  getWeatherByCoords(city.lat, city.lon, city.name);
+
+  saveCities();
+  saveActiveCity();
+  getCurrentIndex();
+  navBtnToggle();
+};
+
+// Save/Remove City function
+SRButton.addEventListener("click", () => {
+  saveRemoveCity();
+  SRButtonManager();
+});
+
+// Save/Remove button manager
+const SRButtonManager = () => {
+  const existence = checkExistence();
+
+  if (!existence) {
+    SRButton.textContent = "Save City";
+  } else {
+    SRButton.textContent = "Remove City";
+  }
+};
+
+// Next/Prev buttons toogle function
+const navBtnToggle = () => {
+  navBtn.forEach((el) => {
+    if (cities.length > 1) {
+      el.classList.remove("disable");
+    } else {
+      el.classList.add("disable");
+    }
+  });
+};
+
+// Next button function
+nextBtn.addEventListener("click", () => {
+  if (cities.length <= 1) {
+    return;
+  }
+
+  currentIndex = (currentIndex + 1) % cities.length;
+
+  getWeatherByCoords(
+    cities[currentIndex].lat,
+    cities[currentIndex].lon,
+    cities[currentIndex].name,
+  );
+
+  activeCity = {
+    name: cities[currentIndex].name,
+    lat: cities[currentIndex].lat,
+    lon: cities[currentIndex].lon,
+  };
+
+  saveActiveCity();
+  getCurrentIndex();
+  SRButtonManager();
+});
+
+// Prev button function
+prevBtn.addEventListener("click", () => {
+  if (cities.length <= 1) {
+    return;
+  }
+
+  currentIndex = (currentIndex - 1 + cities.length) % cities.length;
+
+  getWeatherByCoords(
+    cities[currentIndex].lat,
+    cities[currentIndex].lon,
+    cities[currentIndex].name,
+  );
+
+  activeCity = {
+    name: cities[currentIndex].name,
+    lat: cities[currentIndex].lat,
+    lon: cities[currentIndex].lon,
+  };
+
+  saveActiveCity();
+  getCurrentIndex();
+  SRButtonManager();
+});
 
 // Mapping icons
 function getWeatherIcon(iconCode) {
@@ -90,18 +280,15 @@ const setBackground = (weather) => {
   return `url(./images/${bg})`;
 };
 
-// Show date now
-dateNow.innerText = new Date().toISOString().split("T")[0];
-
 // Save default country, city in local storage
-const saveCity = () => localStorage.setItem("currentCity", currentCity);
 const saveCountry = () =>
   localStorage.setItem("currentCountry", currentCountry);
-const saveLat = () => localStorage.setItem("currentLat", currentLat);
-const saveLon = () => localStorage.setItem("currentLon", currentLon);
+const saveCity = () => localStorage.setItem("currentCity", activeCity.name);
+const saveLat = () => localStorage.setItem("currentLat", activeCity.lat);
+const saveLon = () => localStorage.setItem("currentLon", activeCity.lon);
 
 // Helper
-const kelvinToCelcius = (kelvin) => {
+const kelvinToCelsius = (kelvin) => {
   return Math.round(kelvin - 273.15);
 };
 
@@ -113,8 +300,6 @@ inputCountry.addEventListener("change", () => {
 });
 
 // Run bounceGeocoding when user inputing city name
-let debounceTimer;
-
 inputCity.addEventListener("input", (e) => {
   clearTimeout(debounceTimer);
 
@@ -179,7 +364,7 @@ const renderSuggestions = (places) => {
   ul.classList.add("sugges-inner");
   suggestions.appendChild(ul);
 
-  if (!places.length == 0) {
+  if (places.length !== 0) {
     places.forEach((place) => {
       const li = document.createElement("li");
       li.textContent = `${place.name}, ${place.state ? place.state + "," : ""} ${place.country}`;
@@ -190,17 +375,12 @@ const renderSuggestions = (places) => {
         inputCity.value = place.name;
         suggestions.innerHTML = "";
 
-        currentCity = place.name;
-        currentLat = place.lat;
-        currentLon = place.lon;
+        getWeatherByCoords(place.lat, place.lon, place.name);
+        getForecast(place.lat, place.lon);
 
-        getWeatherByCoords(currentLat, currentLon, currentCity);
-        getForecast(currentLat, currentLon);
+        activeCity = { name: place.name, lat: place.lat, lon: place.lon };
 
-        // Save city, lat & lon
-        saveCity();
-        saveLat();
-        saveLon();
+        saveActiveCity();
 
         setTimeout(() => {
           if (document.activeElement !== inputCity) {
@@ -208,6 +388,8 @@ const renderSuggestions = (places) => {
             inputCity.value = "";
           }
         }, 5000);
+        SRButtonManager();
+        getCurrentIndex();
       });
     });
   } else {
@@ -231,15 +413,13 @@ const getWeatherByCoords = async (lat, lon, name) => {
       throw new Error(data.error || data.message || "Unknown error");
     }
 
-    // let iconImage = `https://openweathermap.org/payload/api/media/file/${data.weather[0].icon}.png`;
-
-    // ambil url background
+    // Get background URL
     const bgUrl = setBackground(data.weather[0].main);
 
-    // buat image loader
+    // Image loader
     const img = new Image();
 
-    // ambil url asli tanpa "url(...)"
+    // get URL without "url(...)"
     const cleanUrl = bgUrl
       .replace('url("', "")
       .replace('")', "")
@@ -249,19 +429,19 @@ const getWeatherByCoords = async (lat, lon, name) => {
     // set src
     img.src = cleanUrl;
 
-    // tunggu sampai image selesai load
+    // Loading image
     img.onload = () => {
-      // set background setelah siap
+      // set background after loading image done
       outliner.style.backgroundImage = bgUrl;
 
-      // baru tampilkan semua data
+      // Show all data
       city.textContent = name;
-      temperature.textContent = `${kelvinToCelcius(data.main.temp)}°C`;
-      maxTemp.textContent = `${kelvinToCelcius(data.main.temp_max)}°C`;
-      minTemp.textContent = `${kelvinToCelcius(data.main.temp_min)}°C`;
+      temperature.textContent = `${kelvinToCelsius(data.main.temp)}°C`;
+      maxTemp.textContent = `${kelvinToCelsius(data.main.temp_max)}°C`;
+      minTemp.textContent = `${kelvinToCelsius(data.main.temp_min)}°C`;
       weather.textContent = data.weather[0].main;
       icon.innerHTML = getWeatherIcon(data.weather[0].icon);
-      feelsLike.textContent = `${kelvinToCelcius(data.main.feels_like)}°C`;
+      feelsLike.textContent = `${kelvinToCelsius(data.main.feels_like)}°C`;
       humidity.textContent = data.main.humidity;
       windSpeed.textContent = data.wind.speed;
 
@@ -316,7 +496,7 @@ const getForecast = async (lat, lon) => {
     // Get 5 days Min/Max Forecast, Average POP (Possible rain), Average Weather
     const dailyData = Object.keys(grouped).map((date) => {
       const items = grouped[date];
-      const temps = items.map((item) => kelvinToCelcius(item.main.temp));
+      const temps = items.map((item) => kelvinToCelsius(item.main.temp));
       const avgPop =
         items.reduce((sum, item) => sum + item.pop, 0) / items.length;
       const icons = items.map((item) => item.weather[0].icon);
@@ -375,7 +555,7 @@ const renderADay = (data) => {
   aDay.innerHTML = "";
 
   data.forEach((item) => {
-    const temp = kelvinToCelcius(item.main.temp);
+    const temp = kelvinToCelsius(item.main.temp);
 
     // Convert time format to PM/AM without spacing
     const formatHourParts = (dateString) => {
@@ -399,32 +579,50 @@ const renderADay = (data) => {
   });
 };
 
-// Load current data from local storage
-const savedCity = localStorage.getItem("currentCity");
-const savedCountry = localStorage.getItem("currentCountry");
-const savedLat = localStorage.getItem("currentLat");
-const savedLon = localStorage.getItem("currentLon");
+// Load current data
+const loadCurrentData = () => {
+  const savedCountry = localStorage.getItem("currentCountry");
+  const savedActiveCity = JSON.parse(localStorage.getItem("activeCity"));
 
-// Set current Country
-if (savedCountry && savedCity && savedLat && savedLon) {
-  inputCountry.value = savedCountry;
-  currentCountry = savedCountry;
-  currentCity = savedCity;
-  currentLat = savedLat;
-  currentLon = savedLon;
-  getWeatherByCoords(currentLat, currentLon, currentCity);
-  getForecast(currentLat, currentLon);
-} else {
-  saveCity();
-  saveCountry();
-  saveLat();
-  saveLon();
-  getWeatherByCoords(currentLat, currentLon, currentCity);
-  getForecast(currentLat, currentLon);
-}
+  if (savedCountry && savedActiveCity) {
+    inputCountry.value = savedCountry;
+    currentCountry = savedCountry;
+    activeCity = savedActiveCity;
+    getWeatherByCoords(activeCity.lat, activeCity.lon, activeCity.name);
+    getForecast(activeCity.lat, activeCity.lon);
+    getCurrentIndex();
+  } else {
+    saveCountry();
+    saveActiveCity();
+    getWeatherByCoords(activeCity.lat, activeCity.lon, activeCity.name);
+    getForecast(activeCity.lat, activeCity.lon);
+    getCurrentIndex();
+  }
+};
 
-// UI
-searchCityLabel.addEventListener("click", () => {
-  inputCity.classList.add("active");
-  inputCity.focus();
-});
+// Search City UI
+const manageSearchField = () => {
+  searchCityLabel.addEventListener("click", () => {
+    inputCity.classList.add("active");
+    inputCity.focus();
+  });
+};
+
+// Display current date
+const displayDate = () => {
+  dateNow.innerText = new Date().toISOString().split("T")[0];
+};
+
+// App initialization
+const appInit = () => {
+  displayDate();
+  manageSearchField();
+  loadCities();
+  loadCurrentData();
+  SRButtonManager();
+  navBtnToggle();
+};
+
+// APP INITIALIZATION
+
+appInit();
