@@ -178,10 +178,19 @@ nextBtn.addEventListener("click", () => {
 
   currentIndex = (currentIndex + 1) % cities.length;
 
+  const next = {
+    out: "left-out",
+    in: "right-in",
+  };
+
+  mainContent.classList.add(next.out);
+  mainContent.classList.add(next.out);
+
   getWeatherByCoords(
     cities[currentIndex].lat,
     cities[currentIndex].lon,
     cities[currentIndex].name,
+    next,
   );
 
   activeCity = {
@@ -203,10 +212,18 @@ prevBtn.addEventListener("click", () => {
 
   currentIndex = (currentIndex - 1 + cities.length) % cities.length;
 
+  const prev = {
+    out: "right-out",
+    in: "left-in",
+  };
+
+  mainContent.classList.add(prev.out);
+
   getWeatherByCoords(
     cities[currentIndex].lat,
     cities[currentIndex].lon,
     cities[currentIndex].name,
+    prev,
   );
 
   activeCity = {
@@ -219,6 +236,20 @@ prevBtn.addEventListener("click", () => {
   getCurrentIndex();
   SRButtonManager();
 });
+
+const slideDirection = (direction) => {
+  if (!direction) return; // ✅ aman
+
+  mainContent.classList.remove(direction.out);
+  mainContent.classList.add(direction.in);
+  mainContent.addEventListener(
+    "animationend",
+    () => {
+      mainContent.classList.remove(direction.in);
+    },
+    { once: true },
+  );
+};
 
 // Mapping icons
 function getWeatherIcon(iconCode) {
@@ -281,11 +312,12 @@ const setBackground = (weather) => {
 };
 
 // Save default country, city in local storage
-const saveCountry = () =>
+const saveCountry = () => {
   localStorage.setItem("currentCountry", currentCountry);
-const saveCity = () => localStorage.setItem("currentCity", activeCity.name);
-const saveLat = () => localStorage.setItem("currentLat", activeCity.lat);
-const saveLon = () => localStorage.setItem("currentLon", activeCity.lon);
+  const saveCity = () => localStorage.setItem("currentCity", activeCity.name);
+  const saveLat = () => localStorage.setItem("currentLat", activeCity.lat);
+  const saveLon = () => localStorage.setItem("currentLon", activeCity.lon);
+};
 
 // Helper
 const kelvinToCelsius = (kelvin) => {
@@ -401,8 +433,8 @@ const renderSuggestions = (places) => {
 };
 
 // Get weather by coordinats
-const getWeatherByCoords = async (lat, lon, name) => {
-  mainContent.classList.add("hide");
+const getWeatherByCoords = async (lat, lon, name, direction = null) => {
+  // mainContent.classList.add("hide");
   contentsLoader.classList.remove("hide");
 
   try {
@@ -432,7 +464,28 @@ const getWeatherByCoords = async (lat, lon, name) => {
     // Loading image
     img.onload = () => {
       // set background after loading image done
-      outliner.style.backgroundImage = bgUrl;
+      const currentBg = document.querySelector(".bg.current");
+      const nextBg = document.querySelector(".bg.next");
+
+      nextBg.style.backgroundImage = bgUrl;
+
+      // trigger reflow (penting biar transition kebaca)
+      nextBg.offsetHeight;
+
+      nextBg.style.opacity = 1;
+      currentBg.style.opacity = 0;
+
+      setTimeout(() => {
+        currentBg.classList.remove("current");
+        nextBg.classList.remove("next");
+
+        currentBg.classList.add("next");
+        nextBg.classList.add("current");
+
+        // reset opacity biar siap untuk animasi berikutnya
+        nextBg.style.opacity = 1;
+        currentBg.style.opacity = 0;
+      }, 400);
 
       // Show all data
       city.textContent = name;
@@ -445,8 +498,9 @@ const getWeatherByCoords = async (lat, lon, name) => {
       humidity.textContent = data.main.humidity;
       windSpeed.textContent = data.wind.speed;
 
-      mainContent.classList.remove("hide");
+      slideDirection(direction);
       contentsLoader.classList.add("hide");
+      console.log("direction", direction);
     };
   } catch (error) {
     const ul = document.createElement("ul");

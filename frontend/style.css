@@ -44,6 +44,23 @@ ol {
   color: #fff;
 }
 
+.bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.bg.current {
+  opacity: 1;
+}
+
+.bg.next {
+  opacity: 0;
+}
+
 .container {
   min-height: 100svh;
   padding: 1.25rem;
@@ -156,11 +173,67 @@ ol {
   transition: 0.3s;
   opacity: 1;
   visibility: visible;
+  position: relative;
 }
 
-.main-content.hide {
-  opacity: 0;
-  visibility: hidden;
+@keyframes left-out {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-75%);
+    opacity: 0;
+  }
+}
+
+@keyframes right-in {
+  0% {
+    transform: translateX(75%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes right-out {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(75%);
+    opacity: 0;
+  }
+}
+
+@keyframes left-in {
+  0% {
+    transform: translateX(-75%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.left-out {
+  animation: left-out 0.25s ease 0s 1 normal forwards;
+}
+
+.right-in {
+  animation: right-in 0.25s ease 0s 1 normal forwards;
+}
+
+.right-out {
+  animation: right-out 0.25s ease 0s 1 normal forwards;
+}
+
+.left-in {
+  animation: left-in 0.25s ease 0s 1 normal forwards;
 }
 
 .search {
